@@ -63,6 +63,7 @@ async function showAwardDialog() {
 		position: {
 			width: game.settings.get(settingsKey, "character-solo-xp-input") ? 350 : 300
 		},
+		render: onAwardDialogRendered,
 		content: content,
 		ok: {
 			label: "award-xp.award-xp",
@@ -73,7 +74,7 @@ async function showAwardDialog() {
 }
 
 function onAwardDialogRendered(event, dialog) {
-	//html.find("#award-xp-secondary-xp").keyup(onSecondaryChange)
+	dialog.element.querySelector("#award-xp-secondary-xp")?.addEventListener("keyup", onSecondaryChange)
 }
 
 function awardXP(event, button, dialog) {
