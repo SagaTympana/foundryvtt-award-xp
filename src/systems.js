@@ -27,6 +27,15 @@ export function preparePcData(characters) {
 					nextLevelXp: undefined
 				}
 			});
+		case "dnd4e":
+			return characters.map(actor => {
+				return {
+					actor: actor,
+					xp: actor.system.details.exp,
+					xpAttribute: "system.details.exp",
+					nextLevelXp: CONFIG.DND4E.CHARACTER_EXP_LEVELS[Number(actor.system.details.level) ?? 0]
+				}
+			});
 		case "splittermond":
 			return characters.map(actor => {
 				let freeXp = actor.data.data.experience.free;
@@ -45,6 +54,7 @@ export function getSecondaryFormula() {
 		default:
 		case "pf2e":
 		case "age-of-sigmar-soulbound":
+		case "dnd4e":
 		case "splittermond":
 			return undefined;
 

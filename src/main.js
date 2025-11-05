@@ -10,15 +10,19 @@ Hooks.once("init", () => {
 	registerKeybindings();
 })
 
-Hooks.on("renderActorDirectory", async (actor_directory, html, data) => {
+Hooks.on("renderActorDirectory", async (app, _element, _context, options) => {
 	// Only show the award xp button to the gm
-	if (!game.user.isGM)
+	if (!game.user.isGM || !options.parts.includes("footer"))
 		return
-	const awardButton = $(`<button><i class="fas fa-angle-double-up"></i>${game.i18n.localize("award-xp.award-xp")}</button>`)
-	html.find(".directory-footer").append(awardButton)
-	awardButton.click((event) => {
+
+	const awardButton = document.createElement("button");
+	awardButton.innerHTML = `<i class="fas fa-angle-double-up"></i> <span>${game.i18n.localize("award-xp.award-xp")}</span>`;
+	awardButton.id = "awardXPButton";
+	awardButton.addEventListener("click", () => {
 		showAwardDialog()
 	})
+	const footer = app.element.querySelector("footer.directory-footer");
+	footer?.append(awardButton);
 })
 
 function registerKeybindings() {
@@ -49,39 +53,41 @@ async function showAwardDialog() {
 
 	const characters = getPcs().filter(filterCharacters)
 	const data = {secondaryName, characters, showSoloXp: game.settings.get(settingsKey, "character-solo-xp-input")}
-	const content = await renderTemplate("modules/award-xp/templates/award_experience_dialog.html", data)
-	Dialog.prompt({
-		content: content,
-		label: game.i18n.localize("award-xp.award-xp"),
-		render: onAwardDialogRendered,
-		callback: awardXP,
-		rejectClose: false,
-		options: {
-			width: game.settings.get(settingsKey, "character-solo-xp-input") ? 300 : 250,
-			jQuery: true,
+	const content = await foundry.applications.handlebars.renderTemplate("modules/award-xp/templates/award_experience_dialog.html", data)
+	await foundry.applications.api.Dialog.input({
+		id: "award-xp",
+		classes: ["standard-form"],
+		window: {
+			title: game.i18n.localize("award-xp.award-xp")
 		},
+		position: {
+			width: game.settings.get(settingsKey, "character-solo-xp-input") ? 350 : 300
+		},
+		content: content,
+		ok: {
+			label: "award-xp.award-xp",
+			callback: (event, button, dialog) => awardXP(event, button, dialog)
+		},
+		rejectClose: false,
 	})
 }
 
-function onAwardDialogRendered(html) {
-	html.find("#award-xp-secondary-xp").keyup(onSecondaryChange)
+function onAwardDialogRendered(event, dialog) {
+	//html.find("#award-xp-secondary-xp").keyup(onSecondaryChange)
 }
 
-function awardXP(html) {
-	html = html[0]
-	let charIds = Array.from(html.querySelectorAll(".award-xp-char-selector")).filter(selector => selector.checked).map(selector => selector.name)
+function awardXP(event, button, dialog) {
+	const form = button.closest("form");
+	let charIds = Array.from(form.querySelectorAll(".award-xp-char-selector")).filter(selector => selector.checked).map(selector => selector.name)
 	if (charIds.length === 0) {
 		throw game.i18n.localize("award-xp.no-char-selected")
 	}
 	const pcs = preparePcData(game.actors.filter(actor => charIds.includes(actor.id)))
-	const groupXp = parseInt(html.querySelector("#award-xp-xp").value)
-	if (isNaN(groupXp)) {
-		throw game.i18n.localize("award-xp.xp-nan")
-	}
+	const groupXp = parseInt(form.querySelector("#award-xp-xp").value) || 0;
 
 	const divideXp = game.settings.get(settingsKey, "divide-xp");
 	const charXp = divideXp ? Math.floor(groupXp / pcs.length) : groupXp;
-	let soloXpInputs = Array.from(html.querySelectorAll(".award-xp-solo"))
+	let soloXpInputs = Array.from(form.querySelectorAll(".award-xp-solo"))
 	let soloXpPerCharacter = {}
 	pcs.forEach(pc => {
 		soloXpPerCharacter[pc.actor.id] = 0
