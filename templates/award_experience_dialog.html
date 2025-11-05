@@ -1,9 +1,14 @@
+<fieldset>
+<legend>{{localize "award-xp.group-xp"}}</legend>
 <div class="award-xp-form">
-	<div class="award-xp-primary"><label for="xp">{{localize "award-xp.group-xp"}}</label><input id="award-xp-xp" type="text" name="xp"/></div>
+	<div class="award-xp-primary"><label for="xp"></label><input id="award-xp-xp" type="text" name="xp"/></div>
 	{{#if secondaryName}}
-		<div class="award-xp-secondary"><label for="secondary-xp">{{secondaryName}}</label><input type="text" name="secondary-xp" id="award-xp-secondary-xp"/></div>
+		<div class="award-xp-secondary"><input type="text" name="secondary-xp" placeholder={{secondaryName}} id="award-xp-secondary-xp"/></div>
 	{{/if}}
 </div>
+</fieldset>
+<fieldset>
+<legend>{{localize "award-xp.characters"}}</legend>
 <div class="award-xp-char-list">
 	{{#each characters}}
 		<div>
@@ -16,3 +21,4 @@
 		</div>
 	{{/each}}
 </div>
+</fieldset>

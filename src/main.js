@@ -61,7 +61,7 @@ async function showAwardDialog() {
 			title: game.i18n.localize("award-xp.award-xp")
 		},
 		position: {
-			width: game.settings.get(settingsKey, "character-solo-xp-input") ? 350 : 300
+			width: game.settings.get(settingsKey, "character-solo-xp-input") ? 360 : 300
 		},
 		render: onAwardDialogRendered,
 		content: content,
