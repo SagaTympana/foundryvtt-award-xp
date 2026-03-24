@@ -50,7 +50,7 @@ async function registerSettingsAsync() {
 
 class CharacterFilterApplication extends FormApplication {
 	static get defaultOptions() {
-		return mergeObject(super.defaultOptions, {
+		return foundry.utils.mergeObject(super.defaultOptions, {
 			id: "award-xp-edit-character-filter",
 			title: game.i18n.localize("award-xp.settings.filter-character.name"),
 			template: "modules/award-xp/templates/edit_character_filter_dialog.html",
@@ -114,7 +114,7 @@ class CharacterPickerApplication extends Application {
 	}
 
 	static get defaultOptions() {
-		return mergeObject(super.defaultOptions, {
+		return foundry.utils.mergeObject(super.defaultOptions, {
 			id: "award-xp-character-picker",
 			title: game.i18n.localize("award-xp.char-picker"),
 			template: "modules/award-xp/templates/character_picker_dialog.html",
