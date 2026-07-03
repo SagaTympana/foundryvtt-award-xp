@@ -44,7 +44,7 @@ export function registerSettings() {
 }
 
 async function registerSettingsAsync() {
-	const rowTemplate = await getTemplate("modules/award-xp/templates/edit_character_filter_dialog_table_row.html")
+	const rowTemplate = await foundry.applications.handlebars.getTemplate("modules/award-xp/templates/edit_character_filter_dialog_table_row.html")
 	Handlebars.registerPartial("awardXpRowTemplate", rowTemplate)
 }
 
